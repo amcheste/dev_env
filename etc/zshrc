@@ -1,0 +1,14 @@
+export PS1="%n:%1~ $ "
+
+export JAVA_HOME=`/usr/libexec/java_home`
+
+alias gorepo="cd ~/Repos"
+alias get_argo_pass="kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo"
+alias argo="kubectl port-forward svc/argocd-server -n argocd 8080:443"
+alias swagger="docker run -d -p 80:8080 swaggerapi/swagger-editor"
+
+function docker_clean() {
+    docker rm -f $(docker ps -a -q)
+    docker rmi -f $(docker images -q)
+}
+
