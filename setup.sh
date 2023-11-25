@@ -30,6 +30,9 @@ if [[ $? -ne 0 ]]; then
         echo "ERROR: Failed to install homebrew"
         exit $FAILED
     fi
+    (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/achester/.zprofile
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+	
 fi
 
 #
@@ -138,16 +141,16 @@ fi
 
 #
 # Install operator-sdk for k8s operator development
-echo "Checking for operator-sdk..."
-brew list operator-sdk > /dev/null
-if [[ $? -ne 0 ]]; then
-    echo "Installing operator-sdk..."
-    brew install operator-sdk
-    if [[ $? -ne 0 ]]; then
-        echo "ERROR: Failed to install operator-sdk"
-        exit $FAILED
-    fi
-fi
+#echo "Checking for operator-sdk..."
+#brew list operator-sdk > /dev/null
+#if [[ $? -ne 0 ]]; then
+#    echo "Installing operator-sdk..."
+#    brew install operator-sdk
+#    if [[ $? -ne 0 ]]; then
+#        echo "ERROR: Failed to install operator-sdk"
+#        exit $FAILED
+#    fi
+#fi
 
 #
 # Install oci cli
@@ -164,16 +167,16 @@ fi
 
 #
 # Install doctl cli
-echo "Checking for digital ocean cli..."
-brew list doctl > /dev/null
-if [[ $? -ne 0 ]]; then
-    echo "Installing doctl..."
-    brew install doctl
-    if [[ $? -ne 0 ]]; then
-        echo "ERROR: Failed to install doctl"
-        exit $FAILED
-    fi
-fi
+#echo "Checking for digital ocean cli..."
+#brew list doctl > /dev/null
+#if [[ $? -ne 0 ]]; then
+#    echo "Installing doctl..."
+#    brew install doctl
+#    if [[ $? -ne 0 ]]; then
+#        echo "ERROR: Failed to install doctl"
+#        exit $FAILED
+#    fi
+#fi
 
 #
 # Install jq for json parsing
@@ -190,29 +193,29 @@ fi
 
 #
 # Installing terraform
-echo "Checking for terraform..."
-brew list terraform > /dev/null
-if [[ $? -ne 0 ]]; then
-    echo "Installing terraform..."
-    brew install terraform
-    if [[ $? -ne 0 ]]; then
-        echo "ERROR: Failed to install terraform"
-        exit $FAILED
-    fi
-fi
+#echo "Checking for terraform..."
+#brew list terraform > /dev/null
+#if [[ $? -ne 0 ]]; then
+#    echo "Installing terraform..."
+#    brew install terraform
+#    if [[ $? -ne 0 ]]; then
+#        echo "ERROR: Failed to install terraform"
+#        exit $FAILED
+#    fi
+#fi
 
 #
 # Install gator for gatekeeper development
-echo "Checking for gator..."
-brew list gator > /dev/null
-if [[ $? -ne 0 ]]; then
-    echo "Installing gator..."
-    brew install gator
-    if [[ $? -ne 0 ]];  then
-        echo "ERROR: Failed to install gator"
-        exit $FAILED
-    fi
-fi
+#echo "Checking for gator..."
+#brew list gator > /dev/null
+#if [[ $? -ne 0 ]]; then
+#    echo "Installing gator..."
+#    brew install gator
+#    if [[ $? -ne 0 ]];  then
+#        echo "ERROR: Failed to install gator"
+#        exit $FAILED
+#    fi
+#fi
 
 echo "Environment has been setup!"
 

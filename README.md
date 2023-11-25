@@ -11,12 +11,12 @@ This script will create the desired repo structure and install depedencies using
 ### .vim
 
 The following will override your `.vimrc`:
-`$ cp vimrc ~/.vimrc`
+`$ cp etc/vimrc ~/.vimrc`
 
 ### .zsh
 
 The follwoing will override your `.zshrc`:
-`$ cp zshrc ~/.zshrc`
+`$ cp etc/zshrc ~/.zshrc`
 
 ## Manual Steps
 
