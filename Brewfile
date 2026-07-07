@@ -15,6 +15,7 @@ brew "wget"
 brew "jq"               # JSON processor
 brew "tree"
 brew "tart"             # Apple Silicon VM runner (local acceptance tests)
+brew "spaceship"        # zsh prompt (sourced in dotfiles/zshrc)
 
 # ── Languages ────────────────────────────────────────────────────────────────
 brew "go"

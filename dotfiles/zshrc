@@ -1,8 +1,10 @@
-# ── Prompt ───────────────────────────────────────────────────────────────────
-export PS1="%n:%1~ $ "
-
 # ── Homebrew ─────────────────────────────────────────────────────────────────
 eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
+
+# ── Spaceship Prompt ─────────────────────────────────────────────────────────
+# Guard: falls back to the default zsh prompt until `brew bundle` installs it
+[ -f /opt/homebrew/opt/spaceship/spaceship.zsh ] && \
+    source /opt/homebrew/opt/spaceship/spaceship.zsh
 
 # ── Java ─────────────────────────────────────────────────────────────────────
 export JAVA_HOME=$(/usr/libexec/java_home 2>/dev/null)
@@ -66,3 +68,8 @@ function mkcd() {
 # See https://github.com/amcheste-ai-agent/epsilon-agent for context
 export CLAUDE_GH_APP_ID="3490270"
 export CLAUDE_GH_APP_PRIVATE_KEY_PATH="$HOME/.claude/secrets/amcheste-ai-agent.pem"
+
+# ── Antigravity IDE ──────────────────────────────────────────────────────────
+# Installed manually, not via Brewfile — only add to PATH where present
+[ -d "$HOME/.antigravity-ide/antigravity-ide/bin" ] && \
+    export PATH="$HOME/.antigravity-ide/antigravity-ide/bin:$PATH"

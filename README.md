@@ -98,6 +98,7 @@ To reconfigure MCPs: `bash scripts/setup-mcps.sh`
 | `tmux` | Terminal multiplexer |
 | `jq` | JSON slicing and dicing in the shell |
 | `mongosh` | MongoDB shell |
+| `spaceship` | Zsh prompt with git/k8s/cloud context |
 
 ### GUI Apps (via Homebrew Cask)
 

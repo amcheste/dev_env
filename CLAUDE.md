@@ -24,13 +24,13 @@ with tools, dotfiles, credentials, MCPs, and Claude Code configuration all inclu
 ## Developer Preferences
 
 ### Editor
-- Primary editor: **Vim** with vim-plug, ALE, vim-go, gruvbox
+- Primary editor: **Vim** with vim-plug, ALE, vim-go, and the custom `alanchester` colorscheme (vendored in `dotfiles/vim/colors/`)
 - AI editor: **Cursor** for larger refactors and exploration
 - Never assume VS Code
 
 ### Shell
 - Shell: **zsh**
-- Prompt is minimal (`%n:%1~ $ `). No heavy frameworks like oh-my-zsh
+- Prompt: **spaceship** (via Homebrew, sourced in `dotfiles/zshrc`). Still no oh-my-zsh or plugin managers
 - Aliases and functions live in `dotfiles/zshrc`, not scattered elsewhere
 
 ### Languages
