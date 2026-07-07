@@ -180,6 +180,9 @@ jobs:
 
       - name: Audit formula style and correctness
         run: |
+          # terraform lives in hashicorp/tap (disabled in homebrew-core after
+          # the BSL license change); newer brew refuses untrusted taps.
+          brew trust hashicorp/tap
           # brew audit/style no longer accept file paths — must use formula name.
           # Tap the local checkout so we can reference it by name.
           brew tap amcheste/dev-env "$(pwd)"
@@ -197,6 +200,9 @@ jobs:
 
       - name: Install CLI tools from Brewfile.ci
         run: |
+          # terraform lives in hashicorp/tap (disabled in homebrew-core after
+          # the BSL license change); newer brew refuses untrusted taps.
+          brew trust hashicorp/tap
           brew update
           brew bundle --file=Brewfile.ci --no-upgrade
         timeout-minutes: 30
