@@ -128,9 +128,26 @@ gh api repos/amcheste/<name>/rulesets \
     {"type": "deletion"},
     {"type": "non_fast_forward"},
     {"type": "creation"}
+  ],
+  "bypass_actors": [
+    {"actor_id": 3490270, "actor_type": "Integration", "bypass_mode": "always"},
+    {"actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "always"}
   ]
 }
 EOF
+```
+
+The bypass actors matter: rulesets bind everyone, including admins, so
+without them no release tag can ever be pushed. Actor 3490270 is the
+`amcheste-ai-agent` GitHub App; RepositoryRole 5 is repo admin.
+
+**Enable Actions PR creation** (the monthly dependency release cannot open
+its release PR without it):
+
+```bash
+gh api -X PUT repos/amcheste/<name>/actions/permissions/workflow \
+  -f default_workflow_permissions=read \
+  -F can_approve_pull_request_reviews=true
 ```
 
 ## Step 4 — Personalise the repo
