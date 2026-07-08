@@ -105,7 +105,9 @@ Require a PR and status checks before merging. Check if `.github/workflows/valid
 gh api repos/<owner/repo>/contents/.github/workflows/validate.yml 2>/dev/null && echo "exists"
 ```
 
-If validate.yml **exists**, ask the user which status check names to require (default: `Lint`, `Commit Lint`). If it **doesn't exist**, apply protection without required checks — just require a PR.
+If validate.yml **exists**, ask the user which status check names to require. Defaults by validate style: a local validate reports `Lint` and `Commit Lint`; a repo calling the centralized `reusable-validate.yml` from amcheste/gh-workflows reports `validate / Lint` and `validate / Commit Lint` (a `uses:` entry under `jobs:` means centralized). If the repo has a `gitleaks.yml` stub, offer to also require `gitleaks / Gitleaks`. If validate.yml **doesn't exist**, apply protection without required checks — just require a PR.
+
+Also verify the repo setting **"Allow GitHub Actions to create and approve pull requests"** is enabled (`gh api repos/<owner/repo>/actions/permissions/workflow`); the monthly dependency release cannot open its PR without it.
 
 ```bash
 gh api repos/<owner/repo>/branches/develop/protection \
@@ -175,10 +177,20 @@ gh api repos/<owner/repo>/rulesets \
     {"type": "deletion"},
     {"type": "non_fast_forward"},
     {"type": "creation"}
+  ],
+  "bypass_actors": [
+    {"actor_id": 3490270, "actor_type": "Integration", "bypass_mode": "always"},
+    {"actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "always"}
   ]
 }
 EOF
 ```
+
+The bypass actors matter: rulesets bind everyone, including admins, so
+without them no release tag can ever be pushed. Actor 3490270 is the
+`amcheste-ai-agent` GitHub App (lets Epsilon complete `/publish-release`);
+RepositoryRole 5 is repo admin (lets the human). Everyone else stays fully
+blocked from creating, deleting, or moving `v*` tags.
 
 ## Step 7 — Verify CODEOWNERS routing
 
