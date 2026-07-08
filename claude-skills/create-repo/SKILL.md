@@ -49,12 +49,18 @@ git checkout -b develop
 git push -u origin develop
 ```
 
-**Set develop as default:**
+**Set develop as default, merge policy, and branch auto-delete** (squash
+disabled to protect bot authorship + co-author trailers; head branches
+auto-delete on merge — they stay restorable from the PR page):
 ```bash
 gh api repos/amcheste/<name> \
   --method PATCH \
   --field default_branch=develop \
-  --jq '.default_branch'
+  --field allow_squash_merge=false \
+  --field allow_rebase_merge=true \
+  --field allow_merge_commit=true \
+  --field delete_branch_on_merge=true \
+  --jq '{default_branch, allow_squash_merge, allow_rebase_merge, allow_merge_commit, delete_branch_on_merge}'
 ```
 
 **Protect develop** (require PR, enforce on admins, all users must go through PR):
@@ -132,9 +138,12 @@ EOF
 Open the following files in the editor and prompt the user to fill them in:
 
 1. **`README.md`** — replace `repo-name` with the actual name, fill in the description
-2. **`CLAUDE.md`** — fill in the "About This Repo" section
-3. **`.github/labeler.yml`** — add project-specific path→label mappings
-4. **`.github/workflows/validate.yml`** — replace the TODO lint step with real commands for this project's language/toolchain
+2. **`SECURITY.md`** — replace `repo-name` in the private-vulnerability-reporting URL
+3. **`CLAUDE.md`** — fill in the "About This Repo" section
+4. **`.github/labeler.yml`** — add project-specific path→label mappings
+5. **`.github/workflows/validate.yml`** — the template ships a real default Lint (markdownlint + offline link check). For docs/tooling repos, consider switching to the centralized `reusable-validate.yml` from amcheste/gh-workflows (required checks then become `validate / Lint` and `validate / Commit Lint`). For code repos, ADD the language lint (shellcheck, ruff, golangci-lint, …) to the existing Lint job.
+
+Note: `monthly-dependency-release.yml` and `gitleaks.yml` are thin stubs calling amcheste/gh-workflows reusables pinned to a release tag — leave them alone; Dependabot bumps the pins. The monthly release also needs the repo setting **Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"** enabled — do that as part of setup.
 
 ## Summary
 
@@ -144,4 +153,4 @@ Tell the user:
 - `develop` is the default branch, protected with required PR + CI
 - `main` is protected — only reachable via develop→main release PR
 - `v*` tags are protected
-- Next: customise `validate.yml` lint steps, then update required status check names with `/setup-repo amcheste/<name>`
+- Next: add language lint to `validate.yml` (or adopt the centralized reusable-validate), enable "Allow GitHub Actions to create and approve pull requests", then sync required status check names with `/setup-repo amcheste/<name>`
