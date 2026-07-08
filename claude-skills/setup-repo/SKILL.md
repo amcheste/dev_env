@@ -68,7 +68,7 @@ fi
 
 The integration trunk doesn't change either way — contributors branch from and PR to `develop` regardless.
 
-## Step 3 — Set merge policy: disable squash, default to rebase
+## Step 3 — Set merge policy: disable squash, default to rebase, auto-delete head branches
 
 Squash-merging is destructive when bot-authored PRs are merged by a human:
 the squash commit replaces the bot's primary authorship with the merger, and
@@ -78,13 +78,18 @@ who actually wrote the code). Rebase merge preserves per-commit authorship
 and trailers; merge commits stay enabled as a fallback for ceremonial merges
 like the CLI `--no-ff` `develop → main` release promotion.
 
+Also enable **automatically delete head branches** — merged PR branches are
+noise, and deleted branches remain restorable from the PR page, so there is
+no downside.
+
 ```bash
 gh api repos/<owner/repo> \
   --method PATCH \
   --field allow_squash_merge=false \
   --field allow_rebase_merge=true \
   --field allow_merge_commit=true \
-  --jq '{allow_squash_merge, allow_rebase_merge, allow_merge_commit}'
+  --field delete_branch_on_merge=true \
+  --jq '{allow_squash_merge, allow_rebase_merge, allow_merge_commit, delete_branch_on_merge}'
 ```
 
 The convention alone isn't enough — without disabling squash at the repo
