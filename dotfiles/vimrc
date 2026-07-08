@@ -16,8 +16,6 @@ set ignorecase
 set smartcase
 set splitbelow
 set splitright
-set autoindent
-set smartindent
 set backspace=indent,eol,start
 set encoding=utf-8
 set hidden
@@ -26,6 +24,7 @@ set nobackup
 set undofile
 syntax on
 filetype plugin indent on
+set termguicolors
 
 " ── Leader Key ─────────────────────────────────────────────────────────────
 let mapleader = " "
@@ -83,7 +82,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
-Plug 'jiangmiao/auto-pairs'
 
 " Status line
 Plug 'itchyny/lightline.vim'
@@ -94,22 +92,16 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " Language — Terraform
 Plug 'hashivim/vim-terraform'
 
-" Language — Markdown
-Plug 'preservim/vim-markdown'
-
 " Linting / Fixing
 Plug 'dense-analysis/ale'
 
-" Theme
-Plug 'morhetz/gruvbox'
-
 call plug#end()
 
-" ── Theme ──────────────────────────────────────────────────────────────────
-let g:gruvbox_contrast_dark = 'medium'
-" Guard: gruvbox may not be installed yet on first run (vim +PlugInstall)
+" ── Theme — alanchester ────────────────────────────────────────────────────
+" Guard: the colorscheme is symlinked by install-dotfiles.sh and may not be
+" present yet on first run
 try
-  colorscheme gruvbox
+  colorscheme alanchester
 catch /^Vim\%((\a\+)\)\=:E185/
   colorscheme desert
 endtry
@@ -117,7 +109,7 @@ endtry
 " ── Lightline ──────────────────────────────────────────────────────────────
 set laststatus=2
 set noshowmode
-let g:lightline = { 'colorscheme': 'gruvbox' }
+let g:lightline = { 'colorscheme': 'wombat' }
 
 " ── ALE (linting & fixing) ─────────────────────────────────────────────────
 let g:ale_fix_on_save = 1

@@ -180,6 +180,9 @@ jobs:
 
       - name: Audit formula style and correctness
         run: |
+          # terraform lives in hashicorp/tap (disabled in homebrew-core after
+          # the BSL license change); newer brew refuses untrusted taps.
+          brew trust hashicorp/tap
           # brew audit/style no longer accept file paths — must use formula name.
           # Tap the local checkout so we can reference it by name.
           brew tap amcheste/dev-env "$(pwd)"
@@ -197,6 +200,9 @@ jobs:
 
       - name: Install CLI tools from Brewfile.ci
         run: |
+          # terraform lives in hashicorp/tap (disabled in homebrew-core after
+          # the BSL license change); newer brew refuses untrusted taps.
+          brew trust hashicorp/tap
           brew update
           brew bundle --file=Brewfile.ci --no-upgrade
         timeout-minutes: 30
@@ -209,8 +215,10 @@ jobs:
           echo "Checking symlinks..."
           test -L "$HOME/.zshrc"  || (echo "FAIL: ~/.zshrc is not a symlink"  && exit 1)
           test -L "$HOME/.vimrc"  || (echo "FAIL: ~/.vimrc is not a symlink"  && exit 1)
+          test -L "$HOME/.vim/colors/alanchester.vim" || (echo "FAIL: alanchester.vim is not a symlink" && exit 1)
           echo "  ~/.zshrc  → $(readlink ~/.zshrc)"
           echo "  ~/.vimrc  → $(readlink ~/.vimrc)"
+          echo "  ~/.vim/colors/alanchester.vim  → $(readlink ~/.vim/colors/alanchester.vim)"
           echo "Symlinks OK ✓"
 
       - name: Assert ~/.secrets was created from template
@@ -243,6 +251,7 @@ jobs:
           command -v doctl     && doctl version
           command -v jq        && jq --version
           command -v gh        && gh --version
+          test -f "$(brew --prefix)/opt/spaceship/spaceship.zsh" || (echo "FAIL: spaceship prompt not installed" && exit 1)
           echo "All tools verified ✓"
 
       - name: Run preflight unit tests

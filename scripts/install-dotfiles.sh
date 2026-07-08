@@ -70,6 +70,11 @@ backup_and_link() {
 backup_and_link "$DOTFILES_DIR/zshrc"  "$HOME/.zshrc"
 backup_and_link "$DOTFILES_DIR/vimrc"  "$HOME/.vimrc"
 
+# ── Vim colorscheme ──────────────────────────────────────────────────────────
+mkdir -p "$HOME/.vim/colors"
+backup_and_link "$DOTFILES_DIR/vim/colors/alanchester.vim" \
+    "$HOME/.vim/colors/alanchester.vim"
+
 # ── Secrets template (only if ~/.secrets doesn't exist) ─────────────────────
 if [[ ! -f "$HOME/.secrets" ]]; then
     echo ""
