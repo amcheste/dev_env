@@ -20,7 +20,7 @@ jobs:
     outputs:
       source_changed: ${{ steps.filter.outputs.source }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
 
@@ -43,7 +43,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Install shellcheck and actionlint
         run: |
@@ -95,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
 
@@ -176,10 +176,13 @@ jobs:
     needs: [lint, detect-changes]
     if: needs.detect-changes.outputs.source_changed == 'true'
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Audit formula style and correctness
         run: |
+          # terraform lives in hashicorp/tap (disabled in homebrew-core after
+          # the BSL license change); newer brew refuses untrusted taps.
+          brew trust hashicorp/tap
           # brew audit/style no longer accept file paths — must use formula name.
           # Tap the local checkout so we can reference it by name.
           brew tap amcheste/dev-env "$(pwd)"
@@ -193,10 +196,13 @@ jobs:
     needs: [lint, formula-audit, detect-changes]
     if: needs.detect-changes.outputs.source_changed == 'true'
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Install CLI tools from Brewfile.ci
         run: |
+          # terraform lives in hashicorp/tap (disabled in homebrew-core after
+          # the BSL license change); newer brew refuses untrusted taps.
+          brew trust hashicorp/tap
           brew update
           brew bundle --file=Brewfile.ci --no-upgrade
         timeout-minutes: 30
@@ -209,8 +215,10 @@ jobs:
           echo "Checking symlinks..."
           test -L "$HOME/.zshrc"  || (echo "FAIL: ~/.zshrc is not a symlink"  && exit 1)
           test -L "$HOME/.vimrc"  || (echo "FAIL: ~/.vimrc is not a symlink"  && exit 1)
+          test -L "$HOME/.vim/colors/alanchester.vim" || (echo "FAIL: alanchester.vim is not a symlink" && exit 1)
           echo "  ~/.zshrc  → $(readlink ~/.zshrc)"
           echo "  ~/.vimrc  → $(readlink ~/.vimrc)"
+          echo "  ~/.vim/colors/alanchester.vim  → $(readlink ~/.vim/colors/alanchester.vim)"
           echo "Symlinks OK ✓"
 
       - name: Assert ~/.secrets was created from template
@@ -243,6 +251,7 @@ jobs:
           command -v doctl     && doctl version
           command -v jq        && jq --version
           command -v gh        && gh --version
+          test -f "$(brew --prefix)/opt/spaceship/spaceship.zsh" || (echo "FAIL: spaceship prompt not installed" && exit 1)
           echo "All tools verified ✓"
 
       - name: Run preflight unit tests

@@ -23,6 +23,7 @@ class DevTools < Formula
   depends_on "openjdk"
   depends_on "pyenv"
   depends_on "ripgrep"
+  depends_on "spaceship"
   depends_on "terraform"
   depends_on "tmux"
   depends_on "tree"
@@ -60,5 +61,6 @@ class DevTools < Formula
     assert_path_exists pkgshare/"dotfiles/vimrc"
     assert_path_exists pkgshare/"dotfiles/zshrc"
     assert_path_exists pkgshare/"dotfiles/secrets.template"
+    assert_path_exists pkgshare/"dotfiles/vim/colors/alanchester.vim"
   end
 end

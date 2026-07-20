@@ -68,7 +68,7 @@ fi
 
 The integration trunk doesn't change either way — contributors branch from and PR to `develop` regardless.
 
-## Step 3 — Set merge policy: disable squash, default to rebase
+## Step 3 — Set merge policy: disable squash, default to rebase, auto-delete head branches
 
 Squash-merging is destructive when bot-authored PRs are merged by a human:
 the squash commit replaces the bot's primary authorship with the merger, and
@@ -78,13 +78,18 @@ who actually wrote the code). Rebase merge preserves per-commit authorship
 and trailers; merge commits stay enabled as a fallback for ceremonial merges
 like the CLI `--no-ff` `develop → main` release promotion.
 
+Also enable **automatically delete head branches** — merged PR branches are
+noise, and deleted branches remain restorable from the PR page, so there is
+no downside.
+
 ```bash
 gh api repos/<owner/repo> \
   --method PATCH \
   --field allow_squash_merge=false \
   --field allow_rebase_merge=true \
   --field allow_merge_commit=true \
-  --jq '{allow_squash_merge, allow_rebase_merge, allow_merge_commit}'
+  --field delete_branch_on_merge=true \
+  --jq '{allow_squash_merge, allow_rebase_merge, allow_merge_commit, delete_branch_on_merge}'
 ```
 
 The convention alone isn't enough — without disabling squash at the repo
@@ -100,7 +105,9 @@ Require a PR and status checks before merging. Check if `.github/workflows/valid
 gh api repos/<owner/repo>/contents/.github/workflows/validate.yml 2>/dev/null && echo "exists"
 ```
 
-If validate.yml **exists**, ask the user which status check names to require (default: `Lint`, `Commit Lint`). If it **doesn't exist**, apply protection without required checks — just require a PR.
+If validate.yml **exists**, ask the user which status check names to require. Defaults by validate style: a local validate reports `Lint` and `Commit Lint`; a repo calling the centralized `reusable-validate.yml` from amcheste/gh-workflows reports `validate / Lint` and `validate / Commit Lint` (a `uses:` entry under `jobs:` means centralized). If the repo has a `gitleaks.yml` stub, offer to also require `gitleaks / Gitleaks`. If validate.yml **doesn't exist**, apply protection without required checks — just require a PR.
+
+Also verify the repo setting **"Allow GitHub Actions to create and approve pull requests"** is enabled (`gh api repos/<owner/repo>/actions/permissions/workflow`); the monthly dependency release cannot open its PR without it.
 
 ```bash
 gh api repos/<owner/repo>/branches/develop/protection \
@@ -170,10 +177,20 @@ gh api repos/<owner/repo>/rulesets \
     {"type": "deletion"},
     {"type": "non_fast_forward"},
     {"type": "creation"}
+  ],
+  "bypass_actors": [
+    {"actor_id": 3490270, "actor_type": "Integration", "bypass_mode": "always"},
+    {"actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "always"}
   ]
 }
 EOF
 ```
+
+The bypass actors matter: rulesets bind everyone, including admins, so
+without them no release tag can ever be pushed. Actor 3490270 is the
+`amcheste-ai-agent` GitHub App (lets Epsilon complete `/publish-release`);
+RepositoryRole 5 is repo admin (lets the human). Everyone else stays fully
+blocked from creating, deleting, or moving `v*` tags.
 
 ## Step 7 — Verify CODEOWNERS routing
 

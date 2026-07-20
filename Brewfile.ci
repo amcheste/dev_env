@@ -15,6 +15,7 @@ brew "tmux"
 brew "wget"
 brew "jq"
 brew "tree"
+brew "spaceship"
 
 # ── Languages ────────────────────────────────────────────────────────────────
 brew "go"
